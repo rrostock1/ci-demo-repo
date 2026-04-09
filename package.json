@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "description": "Demo repo for Week 10: CI/CD in Practice",
   "scripts": {
-    "lint":             "eslint src/",
-    "lint:fix":         "eslint src/ --fix",
-    "test":             "jest --testPathPattern=tests/unit --coverage",
-    "test:unit":        "jest --testPathPattern=tests/unit --coverage",
-    "test:integration": "jest --testPathPattern=tests/integration --testTimeout=15000",
-    "test:all":         "jest --coverage"
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "test": "jest --testPathPattern=tests/unit --coverage --verbose",
+    "test:unit": "jest --testPathPattern=tests/unit --coverage --verbose",
+    "test:integration": "jest --testPathPattern=tests/integration --testTimeout=15000 --verbose",
+    "test:all": "jest --coverage --verbose"
   },
   "jest": {
     "testEnvironment": "node",
