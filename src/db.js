@@ -56,10 +56,12 @@ async function saveCart(userId, items) {
     [userId, JSON.stringify(items)]
   );
   */
+
+  //always clears cart!
   const result = await getPool().query(
     `INSERT INTO carts (user_id, items)
      VALUES ($1, $2)
-     ON CONFLICT (user_id) DO UPDATE SET items = '[]' //always clears cart!
+     ON CONFLICT (user_id) DO UPDATE SET items = '[]'
      RETURNING *`,
     [userId, JSON.stringify(items)],
   );
