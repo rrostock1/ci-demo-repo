@@ -46,7 +46,7 @@ describe("addItem", () => {
   test("increments quantity when item already exists in cart", async () => {
     db.getCart.mockResolvedValue([{ name: "Widget", price: 10, quantity: 2 }]);
     db.saveCart.mockResolvedValue();
-
+    //unit test will fail with first defect: never increments quantity in db.js
     const result = await addItem("user-1", {
       name: "Widget",
       price: 10,

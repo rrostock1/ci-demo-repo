@@ -10,7 +10,12 @@
  */
 
 const db = require("../../src/db");
-const { addItem, removeItem, getCartSummary, clearCart } = require("../../src/cartService");
+const {
+  addItem,
+  removeItem,
+  getCartSummary,
+  clearCart,
+} = require("../../src/cartService");
 
 const TEST_USER = "integration-test-user";
 
@@ -50,7 +55,7 @@ describe("cart persistence (round-trip)", () => {
 
     expect(items).toHaveLength(2);
   });
-
+  //Integration test will fail with second defect: never increments quantity in db.js
   test("upserts — adding the same item increments quantity in the database", async () => {
     await addItem(TEST_USER, { name: "Widget", price: 10, quantity: 2 });
     await addItem(TEST_USER, { name: "Widget", price: 10, quantity: 3 });

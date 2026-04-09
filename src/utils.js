@@ -11,6 +11,7 @@
  * @returns {string}
  */
 function truncate(str, maxLength) {
+  //test commit
   if (str.length <= maxLength) {
     return str;
   }
