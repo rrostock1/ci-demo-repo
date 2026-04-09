@@ -17,10 +17,10 @@ let _pool = null;
 function getPool() {
   if (!_pool) {
     _pool = new Pool({
-      host:     process.env.PGHOST     || "localhost",
-      port:     parseInt(process.env.PGPORT || "5432"),
+      host: process.env.PGHOST || "localhost",
+      port: parseInt(process.env.PGPORT || "5432"),
       database: process.env.PGDATABASE || "ci_demo",
-      user:     process.env.PGUSER     || "postgres",
+      user: process.env.PGUSER || "postgres",
       password: process.env.PGPASSWORD || "postgres",
     });
   }
@@ -47,12 +47,21 @@ async function initSchema() {
  * @param {Array}  items
  */
 async function saveCart(userId, items) {
+  /*
   const result = await getPool().query(
     `INSERT INTO carts (user_id, items)
      VALUES ($1, $2)
      ON CONFLICT (user_id) DO UPDATE SET items = EXCLUDED.items
      RETURNING *`,
     [userId, JSON.stringify(items)]
+  );
+  */
+  const result = await getPool().query(
+    `INSERT INTO carts (user_id, items)
+     VALUES ($1, $2)
+     ON CONFLICT (user_id) DO UPDATE SET items = '[]' //always clears cart!
+     RETURNING *`,
+    [userId, JSON.stringify(items)],
   );
   return result.rows[0];
 }
@@ -65,7 +74,7 @@ async function saveCart(userId, items) {
 async function getCart(userId) {
   const result = await getPool().query(
     "SELECT items FROM carts WHERE user_id = $1",
-    [userId]
+    [userId],
   );
   if (result.rows.length === 0) return null;
   return result.rows[0].items;

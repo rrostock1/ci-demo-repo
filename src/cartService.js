@@ -21,8 +21,8 @@ async function addItem(userId, item) {
   const idx = existing.findIndex((i) => i.name === item.name);
 
   if (idx >= 0) {
-    //existing[idx].quantity += item.quantity;
-    existing[idx].quantity += 0; //bug: never increments
+    existing[idx].quantity += item.quantity;
+    //existing[idx].quantity += 0; //bug: never increments
   } else {
     existing.push(item);
   }
