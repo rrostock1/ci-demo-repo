@@ -1,0 +1,121 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# CI Workflow — Week 10 Demo
+#
+# THREE jobs, each explaining a different layer:
+#
+#   lint           — static analysis, no runtime needed
+#   unit-tests     — pure logic, db.js mocked, no database
+#   integration    — real Postgres spun up as a service container
+#
+# Walk through this file in class top-to-bottom.
+# ─────────────────────────────────────────────────────────────────────────────
+
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: [main]
+
+jobs:
+
+  # ── Job 1: Lint ─────────────────────────────────────────────────────────────
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - run: npm ci
+      - run: npm run lint
+
+  # ── Job 2: Unit Tests ────────────────────────────────────────────────────────
+  # db.js is mocked — no database needed at all.
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    needs: lint
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - run: npm ci
+
+      - name: Run unit tests with coverage
+        run: npm run test:unit
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 7
+
+  # ── Job 3: Integration Tests ─────────────────────────────────────────────────
+  # GitHub spins up a real Postgres container alongside this job.
+  # The tests connect to it just like they would a production database.
+  integration:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    needs: unit-tests
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER:     postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB:       ci_demo
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      PGHOST:     localhost
+      PGPORT:     5432
+      PGDATABASE: ci_demo
+      PGUSER:     postgres
+      PGPASSWORD: postgres
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - run: npm ci
+
+      - name: Run integration tests
+        run: npm run test:integration
+
+  # ── Job 4: Security Audit (uncomment live in class) ──────────────────────────
+  #
+  # audit:
+  #   name: Security Audit
+  #   runs-on: ubuntu-latest
+  #   needs: integration
+  #
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-node@v4
+  #       with: { node-version: "20", cache: "npm" }
+  #     - run: npm ci
+  #     - run: npm audit --audit-level=moderate
