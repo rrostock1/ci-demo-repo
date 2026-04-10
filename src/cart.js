@@ -20,7 +20,7 @@ function calculateSubtotal(items) {
  * @returns {number}
  */
 function applyDiscount(subtotal, discountPercent) {
-  //const unused = "oops"; //unused variable
+  const unused = "oops"; //unused variable
 
   if (discountPercent < 0 || discountPercent > 100) {
     throw new Error("Discount must be between 0 and 100");
