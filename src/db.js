@@ -47,7 +47,6 @@ async function initSchema() {
  * @param {Array}  items
  */
 async function saveCart(userId, items) {
-  /*
   const result = await getPool().query(
     `INSERT INTO carts (user_id, items)
      VALUES ($1, $2)
@@ -55,9 +54,9 @@ async function saveCart(userId, items) {
      RETURNING *`,
     [userId, JSON.stringify(items)],
   );
-  */
-  //always clears cart!
 
+  //always clears cart!
+  /*
   const result = await getPool().query(
     `INSERT INTO carts (user_id, items)
      VALUES ($1, $2)
@@ -65,6 +64,7 @@ async function saveCart(userId, items) {
      RETURNING *`,
     [userId, JSON.stringify(items)],
   );
+  */
 
   return result.rows[0];
 }
